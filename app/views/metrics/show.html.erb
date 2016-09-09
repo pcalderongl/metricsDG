@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Memory:</strong>
+  <%= @metric.memory %>
+</p>
+
+<p>
+  <strong>Memoryfree:</strong>
+  <%= @metric.memoryFree %>
+</p>
+
+<p>
+  <strong>Processors:</strong>
+  <%= @metric.processors %>
+</p>
+
+<p>
+  <strong>Heapcommited:</strong>
+  <%= @metric.heapCommited %>
+</p>
+
+<p>
+  <strong>Heapinit:</strong>
+  <%= @metric.heapInit %>
+</p>
+
+<p>
+  <strong>Heapused:</strong>
+  <%= @metric.heapUsed %>
+</p>
+
+<%= link_to 'Edit', edit_metric_path(@metric) %> |
+<%= link_to 'Back', metrics_path %>
