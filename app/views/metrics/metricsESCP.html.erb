@@ -1,0 +1,11 @@
+<p id="notice"><%= notice %></p>
+<div>
+  <%= button_to "Reset Entries", action: "reset" %>
+</div>
+<div>
+  <%= select_tag "environmentType", options_for_select([['Dev', 'dev'], ['DevInt', 'devint'], ['Int', 'int'], ['Reg','reg']]), :onchange => "changeEnvironmentData(this.value, 'escp')"  %>
+</div>
+
+<div id="versionsDiv">
+  <%= render :partial => 'charts', :object => @chartListsESCP %>
+</div>

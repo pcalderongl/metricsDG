@@ -1,0 +1,23 @@
+<h1><%= "METRICS: #{@environment} - #{@application}" %></h1>
+
+<h2><%= "Memory Chart" %></h2>
+<%= line_chart @memoryList.map { |key, hash|
+    {name: key, data: hash}
+} %>
+
+<br>
+<br>
+<h2><%= "Heap Chart" %></h2>
+<%= line_chart @heapList.map { |key, hash|
+    {name: key, data: hash}
+} %>
+
+<br>
+<br>
+<h2><%= "Uptime Chart" %></h2>
+<%= line_chart @uptimeList %>
+
+<br>
+<br>
+<h2><%= "Threads Chart" %></h2>
+<%= line_chart @threadsList %>

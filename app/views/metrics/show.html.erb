@@ -30,5 +30,10 @@
   <%= @metric.heapUsed %>
 </p>
 
+<p>
+  <strong>Environment:</strong>
+  <%= @metric.environment %>
+</p>
+
 <%= link_to 'Edit', edit_metric_path(@metric) %> |
 <%= link_to 'Back', metrics_path %>

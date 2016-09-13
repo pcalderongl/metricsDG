@@ -1,0 +1,11 @@
+---
+applications:
+- name: metrics-event-service
+  memory: 1G
+  instances: 1
+  # path: target/event-service-1.1.0-SNAPSHOT.war
+  buildpack: dg_ruby_buildpack
+  timeout: 180
+  # command: rake db:mongoid:create_indexes
+  env:
+    APP_SECRET: foobar

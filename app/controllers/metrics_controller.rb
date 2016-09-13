@@ -1,3 +1,6 @@
+require 'dgi/identity'
+require 'date'
+
 class MetricsController < ApplicationController
   before_action :set_metric, only: [:show, :edit, :update, :destroy]
 
@@ -5,31 +8,110 @@ class MetricsController < ApplicationController
   # GET /metrics.json
   def index
     @metrics = Metric.all
-    @chartLists = getMemoryData()
+
   end
 
-  def getMemoryData()
-    chartLists = Hash.new()
-    memoryFreeChart = Hash.new()
-    memoryChart = Hash.new()
+  def metricsES()
+    @metrics = Metric.all
+    @environment ||= 'dev'
+    @application ||= 'Event Service'
+    @memoryList = getMemoryData()
+    @heapList = getHeapData()
+    @uptimeList = getUptimeData()
+    @threadsList = getThreadsData()
+  end
+
+  def metricsESCP()
+    @metrics = Metric.all
+    @environment ||= 'dev'
+    @application ||= 'Event Service Consumer Proxy'
+    @memoryList = getMemoryData()
+    @heapList = getHeapData()
+    @uptimeList = getUptimeData()
+    @threadsList = getThreadsData()
+  end
+
+  def changeEnvironmentData()
+    @environment ||= params[:environment]
+    @application ||= getAppName(params[:application])
+    @memoryList = getMemoryData()
+    @heapList = getHeapData()
+    @uptimeList = getUptimeData()
+    @threadsList = getThreadsData()
+    render :partial => 'charts', :object => @chartLists
+  end
+
+  def getUptimeData()
+    uptimeChart = Hash.new()
+    myMetrics = Metric.collection.find({:environment => @environment, :application => getAppCode(@application)}).sort({id: -1}).limit(200)
+    myMetrics.each do |m|
+      id = m['_id'].generation_time
+      uptimeChart[id] = m['uptime']
+    end
+    return uptimeChart
+  end
+
+  def getThreadsData()
+    threadsChart = Hash.new()
+    myMetrics = Metric.collection.find({:environment => @environment, :application => getAppCode(@application)}).sort({id: -1}).limit(200)
+    myMetrics.each do |m|
+      id = m['_id'].generation_time
+      threadsChart[id] = m['threads']
+    end
+
+    return threadsChart
+  end
+
+  def getAppName(application)
+    if application == 'escp'
+      return 'Event Service Consumer Proxy'
+    else
+      return 'Event Service'
+    end
+  end
+
+  def getHeapData()
+    heapLists = Hash.new()
     heapCommitedChart = Hash.new()
     heapInitChart = Hash.new()
     heapUsedChart = Hash.new()
-    Metric.all.each do |m|
-      memoryFreeChart["#{m.id.generation_time}"] = m.memoryFree
-      memoryChart["#{m.id.generation_time}"] = m.memory
-      heapCommitedChart["#{m.id.generation_time}"] = m.heapCommited
-      heapInitChart["#{m.id.generation_time}"] = m.heapInit
-      heapUsedChart["#{m.id.generation_time}"] = m.heapUsed
+    myMetrics = Metric.collection.find({:environment => @environment, :application => getAppCode(@application)}).sort({id: -1}).limit(200)
+    myMetrics.each do |m|
+      id = m['_id'].generation_time
+      heapCommitedChart["#{id}"] = m['heapCommited']
+      heapInitChart["#{id}"] = m['heapInit']
+      heapUsedChart["#{id}"] = m['heapUsed']
     end
-    chartLists["memoryFreeChart"] = memoryFreeChart
-    chartLists["memoryChart"] = memoryChart
-    chartLists["heapCommited"] = heapCommitedChart
-    chartLists["heapInit"] = heapInitChart
-    chartLists["heapUsed"] = heapUsedChart
-    return chartLists
+    heapLists["heapCommited"] = heapCommitedChart
+    heapLists["heapInit"] = heapInitChart
+    heapLists["heapUsed"] = heapUsedChart
+    return heapLists
   end
 
+  def getMemoryData()
+    memoryLists = Hash.new()
+    memoryFreeChart = Hash.new()
+    memoryChart = Hash.new()
+    myMetrics = Metric.collection.find({:environment => @environment, :application => getAppCode(@application)}).sort({id: -1}).limit(200)
+    myMetrics.each do |m|
+      id = m['_id'].generation_time
+      puts "memory values => #{m.inspect}"
+      memoryFreeChart["#{id}"] = m['memoryFree']
+      memoryChart["#{id}"] = m['memory']
+    end
+    memoryLists["memoryFreeChart"] = memoryFreeChart
+    memoryLists["memoryChart"] = memoryChart
+    puts "aaaa #{memoryLists}"
+    return memoryLists
+  end
+
+  def getAppCode(appName)
+    if appName == 'Event Service'
+      return 'es'
+    else
+      return 'escp'
+    end
+  end
   # GET /metrics/1
   # GET /metrics/1.json
   def show
@@ -79,6 +161,14 @@ class MetricsController < ApplicationController
     @metric.destroy
     respond_to do |format|
       format.html { redirect_to metrics_url, notice: 'Metric was successfully destroyed.' }
+      format.json { head :no_content }
+    end
+  end
+
+  def reset
+    Metric.destroy_all
+    respond_to do |format|
+      format.html { redirect_to metrics_url, notice: 'Metrics were successfully destroyed.' }
       format.json { head :no_content }
     end
   end

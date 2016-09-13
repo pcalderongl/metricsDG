@@ -5,7 +5,10 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'metrics#index'
-
+  post '/reset', to: 'metrics#reset'
+  get '/changeEnvironmentData', to: 'metrics#changeEnvironmentData'
+  get '/metricsES', to: 'metrics#metricsES'
+  get '/metricsESCP', to: 'metrics#metricsESCP'
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
