@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 
-
-gem 'mongoid', github: 'mongoid/mongoid'
+ruby '2.3.0'
+gem 'mongoid', '6.0.0', :path => 'gems'
+# , git: 'git://github.com/mongoid/mongoid.git'
+#, '6.0.0', :path => 'gems'
+# gem 'mongo'
 gem 'bson_ext' #, '~> 1.8.6'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7'
@@ -13,7 +16,9 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-
+gem 'dgi-identity', :git => 'https://github.digitalglobe.com/p20-20-common/dgi-identity'
+# , '1.0.3', :path => 'gems'
+#, :git => 'https://github.digitalglobe.com/p20-20-common/dgi-identity'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -25,6 +30,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'chartkick'
 gem 'groupdate'
+gem 'rufus-scheduler'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
